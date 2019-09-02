@@ -60,9 +60,14 @@ DidWin(TotalValue)
 function DidWin(ValueGiven)
 {
 WinningValue = 13
+IngValue = 6
 if(ValueGiven < WinningValue)
 {
 document.getElementById("DidWin").innerHTML = "Word value to low!";
+}
+else if(ValueGiven == WinningValue-IngValue)
+{
+document.getElementById("DidWin").innerHTML = "Word value to low, add 'ing'?";
 }
 else if(ValueGiven == WinningValue)
 {
