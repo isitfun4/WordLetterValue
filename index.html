@@ -1,20 +1,82 @@
+<!DOCTYPE html>
 <html>
 <body>
 
-
-<h1> Hello world</h1>
-Word: <input type="text" id="WordInput" onkeyup="myFunction()">
+<p>The word letter value thing.</p>
+Enter your word here <input type="text" id="WordEnter" onkeyup="myFunction()">
+<br>
 
 <p id="WordValue"></p>
-<p id="WordValue"></p>
 
+
+<p id="WordLength"></p>
+<p id="DidWin"></p>
 <script>
 function myFunction() {
-  var x = document.getElementById("WordInput").value;
-  document.getElementById("WordValue").innerHTML = "You selected: " + x;
-}
-</script>
+  var x = document.getElementById("WordEnter");
+  //x.value = x.value.toUpperCase();
+  //document.getElementById("WordValue").innerHTML = "You selected: " + x.value;
+  WordEntered(x.value)
 
+}
+
+
+
+function CalculateLetterValue(LetterGiven)
+{
+//document.getElementById("WordCalculated").innerHTML = "WordCalculated: " + "e";
+LetterValue = {
+"Q":1, "W":1,"E":1,"R":1,"T":1,"Y":1,"U":1,"I":1,"O":1,"P":1,
+"A":2,"S":2,"D":2,"F":2,"G":2,"H":2,"J":2,"K":2,"L":2,
+"Z":3,"X":3,"C":3,"V":3,"B":3,"N":3,"M":3};
+ValueOfLetter = LetterValue[LetterGiven]
+ValueOfInvalidLetter = 0
+if(ValueOfLetter == null)
+{
+ValueOfLetter = ValueOfInvalidLetter
+}
+return ValueOfLetter;
+
+}
+
+function WordEntered(WordGiven)
+{
+  var TotalValue = 0
+WordGiven = WordGiven.toUpperCase();
+  document.getElementById("WordLength").innerHTML = "Word length: " + WordGiven.length;
+  var i;
+
+  for (i = 0; i < WordGiven.length; i++) 
+  {
+    CurrentValue = CalculateLetterValue(WordGiven.charAt(i))
+    TotalValue = TotalValue + CurrentValue
+
+  }
+  
+  document.getElementById("WordValue").innerHTML = "Word Value: " + TotalValue;
+DidWin(TotalValue)
+}
+
+function DidWin(ValueGiven)
+{
+WinningValue = 13
+if(ValueGiven < WinningValue)
+{
+document.getElementById("DidWin").innerHTML = "Word value to low!";
+}
+else if(ValueGiven == WinningValue)
+{
+document.getElementById("DidWin").innerHTML = "You win!";
+}
+else if(ValueGiven > WinningValue)
+{
+document.getElementById("DidWin").innerHTML = "Word value to high!";
+}
+
+
+}
+
+</script>
 
 </body>
 </html>
