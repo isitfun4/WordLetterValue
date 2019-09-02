@@ -8,9 +8,9 @@ Word: <input type="text" name="WordInput" onchange="myFunction()"><br>
 <p id="WordValue"></p>
 
 
-script>
+<script>
 function myFunction() {
-  var x = document.getElementById("mySelect").value;
+  var x = document.getElementById("WordInput").value;
   document.getElementById("WordValue").innerHTML = "You selected: " + x;
 }
 </script>
