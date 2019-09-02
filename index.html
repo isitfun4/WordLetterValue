@@ -1,1 +1,20 @@
+<html>
+<body>
+
+
 <h1> Hello world</h1>
+Word: <input type="text" name="WordInput" onchange="myFunction()"><br>
+
+<p id="WordValue"></p>
+
+
+script>
+function myFunction() {
+  var x = document.getElementById("mySelect").value;
+  document.getElementById("WordValue").innerHTML = "You selected: " + x;
+}
+</script>
+
+
+</body>
+</html>
