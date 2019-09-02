@@ -2,37 +2,127 @@
 <html>
 <body>
 
-<p>The word letter value thing.</p>
-Enter your word here <input type="text" id="WordEnter" onkeyup="myFunction()">
+<details>
+<summary>Settings</summary>
+  <fieldset>
+    <legend>Values</legend>
+    Numbers: <input type="text" id="NumVal" value = "-1"><br>
+    Symbols: <input type="text" id="SymVal" value = "-1"><br>
+    Row Q - P: <input type="text" id="Row1Val" value = "-1"><br>
+    Row A - L: <input type="text" id="Row2Val" value = "-1"><br>
+    Row Z - M: <input type="text" id="Row3Val" value = "-1"><br>
+    Winning Score: <input type="text" id="WinScoreVal" value = "-1"><br>
+    <button onclick="UpdateSettings()">Apply new settings.</button>
+  </fieldset>
+</details>
+
+
+<h2><center><p>The word letter value thing.</p></center></h2>
+Enter your word here <input type="text" id="WordEnter" onkeyup="CheckWordValue()">
 <br>
 
 <p id="WordValue"></p>
 
 
 <p id="WordLength"></p>
+<p id="Goal"></p>
 <p id="DidWin"></p>
+<p id="Scores"></p>
 <script>
-function myFunction() {
+var WinningValue = 13
+
+
+console.log("S value:" + S_Value)
+var Row_1_Value = 1;
+var Row_2_Value = 2;
+var Row_3_Value = 3;
+var NumbersValue = 0;
+var SymbolsValue = 0;
+var IngValue = CalculateLetterValue("I")+CalculateLetterValue("N")+CalculateLetterValue("G")
+var S_Value = CalculateLetterValue("S")
+var IsWinning = false
+var ScoreString = "Scores:"
+var CurrentWordValue = 0
+var PastWinningWord = ""
+window.onload = function() {
+  Initiate();
+};
+function LoadSettingFields()
+{
+document.getElementById("NumVal").value = parseInt(NumbersValue);
+document.getElementById("SymVal").value = parseInt(SymbolsValue);
+document.getElementById("Row1Val").value = parseInt(Row_1_Value);
+document.getElementById("Row2Val").value = parseInt(Row_2_Value);
+document.getElementById("Row3Val").value = parseInt(Row_3_Value);
+document.getElementById("WinScoreVal").value = parseInt(WinningValue);
+
+document.getElementById("Goal").innerHTML = "Score goal:" + WinningValue;
+};
+function UpdateSettings()
+{
+NumbersValue = parseInt(document.getElementById("NumVal").value);
+SymbolsValue = parseInt(document.getElementById("SymVal").value);
+Row_1_Value = parseInt(document.getElementById("Row1Val").value);
+Row_2_Value = parseInt(document.getElementById("Row2Val").value);
+Row_3_Value = parseInt(document.getElementById("Row3Val").value);
+WinningValue = parseInt(document.getElementById("WinScoreVal").value);
+LoadSettingFields()
+CheckWordValue()
+}
+
+
+
+function CheckWordValue() {
   var x = document.getElementById("WordEnter");
   //x.value = x.value.toUpperCase();
   //document.getElementById("WordValue").innerHTML = "You selected: " + x.value;
   WordEntered(x.value)
 }
+function Initiate()
+{
+LoadSettingFields()
+WordEntered(document.getElementById("WordEnter").value)
+}
 function CalculateLetterValue(LetterGiven)
 {
 //document.getElementById("WordCalculated").innerHTML = "WordCalculated: " + "e";
+console.log("calculate letter value:" + LetterGiven)
 LetterValue = {
-"Q":1, "W":1,"E":1,"R":1,"T":1,"Y":1,"U":1,"I":1,"O":1,"P":1,
-"A":2,"S":2,"D":2,"F":2,"G":2,"H":2,"J":2,"K":2,"L":2,
-"Z":3,"X":3,"C":3,"V":3,"B":3,"N":3,"M":3};
+"Q":Row_1_Value, "W":Row_1_Value,"E":Row_1_Value,"R":Row_1_Value,"T":Row_1_Value,"Y":Row_1_Value,"U":Row_1_Value,"I":Row_1_Value,"O":Row_1_Value,"P":Row_1_Value,
+"A":Row_2_Value,"S":Row_2_Value,"D":Row_2_Value,"F":Row_2_Value,"G":Row_2_Value,"H":Row_2_Value,"J":Row_2_Value,"K":Row_2_Value,"L":Row_2_Value,
+"Z":Row_3_Value,"X":Row_3_Value,"C":Row_3_Value,"V":Row_3_Value,"B":Row_3_Value,"N":Row_3_Value,"M":Row_3_Value,
+"1":NumbersValue,"2":NumbersValue,"3":NumbersValue,"4":NumbersValue,"5":NumbersValue,"6":NumbersValue,"7":NumbersValue,"8":NumbersValue,"9":NumbersValue,"0":NumbersValue,
+"!":SymbolsValue,"@":SymbolsValue,"#":SymbolsValue,"$":SymbolsValue,"%":SymbolsValue,"^":SymbolsValue,"&":SymbolsValue,"*":SymbolsValue,"(":SymbolsValue,")":SymbolsValue,
+
+};
 ValueOfLetter = LetterValue[LetterGiven]
-ValueOfInvalidLetter = 0
+console.log("ValueOfLetter:" + ValueOfLetter)
+ValueOfInvalidLetter = -1
 if(ValueOfLetter == null)
 {
 ValueOfLetter = ValueOfInvalidLetter
 }
 return ValueOfLetter;
 }
+function AddNewScore()
+{
+
+//ScoreString = ScoreString + "<p>" +document.getElementById("WordEnter").value +": +" + CurrentWordValue +"</p>";
+ScoreString = ScoreString + document.getElementById("WordEnter").value +", ";
+UpdateScoreOnScreen()
+}
+function PlayerWon()
+{
+IsWinning = true
+AddNewScore()
+PastWinningWord = document.getElementById("WordEnter").value 
+
+}
+function UpdateScoreOnScreen()
+{
+document.getElementById("Scores").innerHTML = ScoreString;
+}
+
 function WordEntered(WordGiven)
 {
   var TotalValue = 0
@@ -42,35 +132,54 @@ WordGiven = WordGiven.toUpperCase();
   for (i = 0; i < WordGiven.length; i++) 
   {
     CurrentValue = CalculateLetterValue(WordGiven.charAt(i))
+    console.log("Letter:" + WordGiven.charAt(i) +" worth:" + CurrentValue)
     TotalValue = TotalValue + CurrentValue
+    console.log(" TotalValue:" + TotalValue)
   }
-  
+  CurrentWordValue = TotalValue
   document.getElementById("WordValue").innerHTML = "Word Value: " + TotalValue;
-DidWin(TotalValue)
+CheckIfDidWin(TotalValue)
 }
-function DidWin(ValueGiven)
+function CheckIfDidWin(ValueGiven)
 {
-WinningValue = 13
-IngValue = 6
+
 if(ValueGiven < WinningValue)
 {
+	IsWinning = false
   if(ValueGiven == (WinningValue-IngValue))
   {
- 	 document.getElementById("DidWin").innerHTML = "Word value to low, add 'ing'?";
+ 	 document.getElementById("DidWin").innerHTML = "Word value: to low, add 'ing'?";
+  }
+  else if(ValueGiven == WinningValue-S_Value)
+  {
+  	document.getElementById("DidWin").innerHTML = "Word value: to low, add 's'?";
+  }
+  else if(ValueGiven == (WinningValue-(IngValue+S_Value)))
+  {
+  	document.getElementById("DidWin").innerHTML = "Word value: to low, add 'ings'?";
   }
   else
   {
-  	document.getElementById("DidWin").innerHTML = "Word value to low!";
+  	document.getElementById("DidWin").innerHTML = "Word value: to low!";
   }
-
 }
 else if(ValueGiven == WinningValue)
 {
+if(document.getElementById("WordEnter").value != PastWinningWord)
+{
 document.getElementById("DidWin").innerHTML = "You win!";
+PlayerWon()
+}
+else
+{
+document.getElementById("DidWin").innerHTML = "You just won with that word, try and be a little bit more creative.!";
+}
+
 }
 else if(ValueGiven > WinningValue)
 {
-document.getElementById("DidWin").innerHTML = "Word value to high!";
+IsWinning = false
+document.getElementById("DidWin").innerHTML = "Word value: to high!";
 }
 }
 </script>
