@@ -17,11 +17,7 @@ function myFunction() {
   //x.value = x.value.toUpperCase();
   //document.getElementById("WordValue").innerHTML = "You selected: " + x.value;
   WordEntered(x.value)
-
 }
-
-
-
 function CalculateLetterValue(LetterGiven)
 {
 //document.getElementById("WordCalculated").innerHTML = "WordCalculated: " + "e";
@@ -36,38 +32,37 @@ if(ValueOfLetter == null)
 ValueOfLetter = ValueOfInvalidLetter
 }
 return ValueOfLetter;
-
 }
-
 function WordEntered(WordGiven)
 {
   var TotalValue = 0
 WordGiven = WordGiven.toUpperCase();
   document.getElementById("WordLength").innerHTML = "Word length: " + WordGiven.length;
   var i;
-
   for (i = 0; i < WordGiven.length; i++) 
   {
     CurrentValue = CalculateLetterValue(WordGiven.charAt(i))
     TotalValue = TotalValue + CurrentValue
-
   }
   
   document.getElementById("WordValue").innerHTML = "Word Value: " + TotalValue;
 DidWin(TotalValue)
 }
-
 function DidWin(ValueGiven)
 {
 WinningValue = 13
 IngValue = 6
 if(ValueGiven < WinningValue)
 {
-document.getElementById("DidWin").innerHTML = "Word value to low!";
-}
-else if(ValueGiven == WinningValue-IngValue)
-{
-document.getElementById("DidWin").innerHTML = "Word value to low, add 'ing'?";
+  if(ValueGiven == (WinningValue-IngValue))
+  {
+ 	 document.getElementById("DidWin").innerHTML = "Word value to low, add 'ing'?";
+  }
+  else
+  {
+  	document.getElementById("DidWin").innerHTML = "Word value to low!";
+  }
+
 }
 else if(ValueGiven == WinningValue)
 {
@@ -77,10 +72,7 @@ else if(ValueGiven > WinningValue)
 {
 document.getElementById("DidWin").innerHTML = "Word value to high!";
 }
-
-
 }
-
 </script>
 
 </body>
