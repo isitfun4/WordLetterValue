@@ -73,6 +73,7 @@ function ClearWinningWordsList()
 {
 localStorage.setItem("WinningWordsList",JSON.stringify([" "]))
 UpdateScoreOnScreen()
+var WinningWordsList = JSON.parse(localStorage.getItem("WinningWordsList")); 
 }
 function UpdateSettings()
 {
@@ -157,7 +158,7 @@ function IsWordPreviouslyUsed(wordGiven)
 {
 	console.log("IsWordPreviouslyUsed wordGiven = " + wordGiven)
 	console.log("IsWordPreviouslyUsed length =" + localStorage.WinningWordsList.length)
-	for (i = 0; i < localStorage.WinningWordsList.length; i++) {
+	for (i = 0; i < WinningWordsList.length; i++) {
 		console.log("loop start")
 		if(WinningWordsList[i] == wordGiven)
 		{
