@@ -13,6 +13,7 @@
     Row Z - M: <input type="text" id="Row3Val" value = "-1"><br>
     Winning Score: <input type="text" id="WinScoreVal" value = "-1"><br>
     <button onclick="UpdateSettings()">Apply new settings.</button>
+	<button onclick="ClearWinningWordsList()">!!Clear Winning Words List!!</button>
   </fieldset>
 </details>
 
@@ -29,10 +30,16 @@ Enter your word here <input type="text" id="WordEnter" onkeyup="CheckWordValue()
 <p id="DidWin"></p>
 <p id="Scores"></p>
 <script>
+
+console.log("=====================================")
+if(localStorage.getItem("WinningWordsList") == null)
+{
+console.log("ListCreated")
+localStorage.setItem("WinningWordsList",JSON.stringify([" "]))
+}
+// 2/26/2020 - added saving to localStorage
+
 var WinningValue = 13
-
-
-console.log("S value:" + S_Value)
 var Row_1_Value = 1;
 var Row_2_Value = 2;
 var Row_3_Value = 3;
@@ -41,147 +48,187 @@ var SymbolsValue = 0;
 var IngValue = CalculateLetterValue("I")+CalculateLetterValue("N")+CalculateLetterValue("G")
 var S_Value = CalculateLetterValue("S")
 var IsWinning = false
-var ScoreString = "Scores:"
+//var ScoreString = "Scores:"
 var CurrentWordValue = 0
-var PastWinningWord = ""
+console.log("load word list")
+var WinningWordsList = JSON.parse(localStorage.getItem("WinningWordsList")); 
+console.log("WinningWordsList = (" + WinningWordsList + ")");
+console.log("word list loaded")
 window.onload = function() {
   Initiate();
 };
 function LoadSettingFields()
 {
-document.getElementById("NumVal").value = parseInt(NumbersValue);
-document.getElementById("SymVal").value = parseInt(SymbolsValue);
-document.getElementById("Row1Val").value = parseInt(Row_1_Value);
-document.getElementById("Row2Val").value = parseInt(Row_2_Value);
-document.getElementById("Row3Val").value = parseInt(Row_3_Value);
-document.getElementById("WinScoreVal").value = parseInt(WinningValue);
-
-document.getElementById("Goal").innerHTML = "Score goal:" + WinningValue;
+	console.log("LoadSettingFields start")
+	document.getElementById("NumVal").value = parseInt(NumbersValue);
+	document.getElementById("SymVal").value = parseInt(SymbolsValue);
+	document.getElementById("Row1Val").value = parseInt(Row_1_Value);
+	document.getElementById("Row2Val").value = parseInt(Row_2_Value);
+	document.getElementById("Row3Val").value = parseInt(Row_3_Value);
+	document.getElementById("WinScoreVal").value = parseInt(WinningValue);
+	document.getElementById("Goal").innerHTML = "Score goal:" + WinningValue;
+	console.log("LoadSettingFields complete")
 };
+function ClearWinningWordsList()
+{
+localStorage.setItem("WinningWordsList",JSON.stringify([" "]))
+UpdateScoreOnScreen()
+}
 function UpdateSettings()
 {
-NumbersValue = parseInt(document.getElementById("NumVal").value);
-SymbolsValue = parseInt(document.getElementById("SymVal").value);
-Row_1_Value = parseInt(document.getElementById("Row1Val").value);
-Row_2_Value = parseInt(document.getElementById("Row2Val").value);
-Row_3_Value = parseInt(document.getElementById("Row3Val").value);
-WinningValue = parseInt(document.getElementById("WinScoreVal").value);
-LoadSettingFields()
-CheckWordValue()
+	console.log("UpdateSettings start")
+	NumbersValue = parseInt(document.getElementById("NumVal").value);
+	SymbolsValue = parseInt(document.getElementById("SymVal").value);
+	Row_1_Value = parseInt(document.getElementById("Row1Val").value);
+	Row_2_Value = parseInt(document.getElementById("Row2Val").value);
+	Row_3_Value = parseInt(document.getElementById("Row3Val").value);
+	WinningValue = parseInt(document.getElementById("WinScoreVal").value);
+	LoadSettingFields()
+	CheckWordValue()
+	console.log("UpdateSettings complete")
 }
 
 
 
 function CheckWordValue() {
-  var x = document.getElementById("WordEnter");
-  //x.value = x.value.toUpperCase();
-  //document.getElementById("WordValue").innerHTML = "You selected: " + x.value;
-  WordEntered(x.value)
+	console.log("CheckWordValue")
+	var x = document.getElementById("WordEnter");
+	//x.value = x.value.toUpperCase();
+	//document.getElementById("WordValue").innerHTML = "You selected: " + x.value;
+	WordEntered(x.value)
 }
 function Initiate()
 {
-LoadSettingFields()
-WordEntered(document.getElementById("WordEnter").value)
+	console.log("Initiate start")
+	LoadSettingFields()
+	WordEntered(document.getElementById("WordEnter").value)
+	UpdateScoreOnScreen()
+	console.log("Initiate complete")
 }
 function CalculateLetterValue(LetterGiven)
 {
-//document.getElementById("WordCalculated").innerHTML = "WordCalculated: " + "e";
-console.log("calculate letter value:" + LetterGiven)
-LetterValue = {
-"Q":Row_1_Value, "W":Row_1_Value,"E":Row_1_Value,"R":Row_1_Value,"T":Row_1_Value,"Y":Row_1_Value,"U":Row_1_Value,"I":Row_1_Value,"O":Row_1_Value,"P":Row_1_Value,
-"A":Row_2_Value,"S":Row_2_Value,"D":Row_2_Value,"F":Row_2_Value,"G":Row_2_Value,"H":Row_2_Value,"J":Row_2_Value,"K":Row_2_Value,"L":Row_2_Value,
-"Z":Row_3_Value,"X":Row_3_Value,"C":Row_3_Value,"V":Row_3_Value,"B":Row_3_Value,"N":Row_3_Value,"M":Row_3_Value,
-"1":NumbersValue,"2":NumbersValue,"3":NumbersValue,"4":NumbersValue,"5":NumbersValue,"6":NumbersValue,"7":NumbersValue,"8":NumbersValue,"9":NumbersValue,"0":NumbersValue,
-"!":SymbolsValue,"@":SymbolsValue,"#":SymbolsValue,"$":SymbolsValue,"%":SymbolsValue,"^":SymbolsValue,"&":SymbolsValue,"*":SymbolsValue,"(":SymbolsValue,")":SymbolsValue,
-
-};
-ValueOfLetter = LetterValue[LetterGiven]
-console.log("ValueOfLetter:" + ValueOfLetter)
-ValueOfInvalidLetter = -1
-if(ValueOfLetter == null)
-{
-ValueOfLetter = ValueOfInvalidLetter
-}
-return ValueOfLetter;
+	//document.getElementById("WordCalculated").innerHTML = "WordCalculated: " + "e";
+	console.log("calculate letter value:" + LetterGiven)
+	LetterValue = {
+	"Q":Row_1_Value, "W":Row_1_Value,"E":Row_1_Value,"R":Row_1_Value,"T":Row_1_Value,"Y":Row_1_Value,"U":Row_1_Value,"I":Row_1_Value,"O":Row_1_Value,"P":Row_1_Value,
+	"A":Row_2_Value,"S":Row_2_Value,"D":Row_2_Value,"F":Row_2_Value,"G":Row_2_Value,"H":Row_2_Value,"J":Row_2_Value,"K":Row_2_Value,"L":Row_2_Value,
+	"Z":Row_3_Value,"X":Row_3_Value,"C":Row_3_Value,"V":Row_3_Value,"B":Row_3_Value,"N":Row_3_Value,"M":Row_3_Value,
+	"1":NumbersValue,"2":NumbersValue,"3":NumbersValue,"4":NumbersValue,"5":NumbersValue,"6":NumbersValue,"7":NumbersValue,"8":NumbersValue,"9":NumbersValue,"0":NumbersValue,
+	"!":SymbolsValue,"@":SymbolsValue,"#":SymbolsValue,"$":SymbolsValue,"%":SymbolsValue,"^":SymbolsValue,"&":SymbolsValue,"*":SymbolsValue,"(":SymbolsValue,")":SymbolsValue,
+	};
+	ValueOfLetter = LetterValue[LetterGiven]
+	console.log("ValueOfLetter:" + ValueOfLetter)
+	ValueOfInvalidLetter = -1
+	if(ValueOfLetter == null)
+	{
+		ValueOfLetter = ValueOfInvalidLetter
+	}
+	return ValueOfLetter;
 }
 function AddNewScore()
-{
-
-//ScoreString = ScoreString + "<p>" +document.getElementById("WordEnter").value +": +" + CurrentWordValue +"</p>";
-ScoreString = ScoreString + document.getElementById("WordEnter").value +", ";
-UpdateScoreOnScreen()
+	{
+	console.log("Add new score")
+	//ScoreString = ScoreString + "<p>" +document.getElementById("WordEnter").value +": +" + CurrentWordValue +"</p>";
+	//ScoreString = ScoreString + document.getElementById("WordEnter").value +", ";
+	console.log("push")
+	WinningWordsList.push(document.getElementById("WordEnter").value)
+	console.log("set")
+	localStorage.setItem("WinningWordsList",JSON.stringify(WinningWordsList))
+	console.log("call update")
+	UpdateScoreOnScreen()
 }
+
 function PlayerWon()
 {
-IsWinning = true
-AddNewScore()
-PastWinningWord = document.getElementById("WordEnter").value 
+	console.log("Player won")
+	IsWinning = true
+	AddNewScore()
+
+	//PastWinningWord = document.getElementById("WordEnter").value 
+
 
 }
 function UpdateScoreOnScreen()
 {
-document.getElementById("Scores").innerHTML = ScoreString;
+	//document.getElementById("Scores").innerHTML = ScoreString;
+	document.getElementById("Scores").innerHTML = JSON.parse(localStorage.getItem("WinningWordsList"));
+}
+function IsWordPreviouslyUsed(wordGiven)
+{
+	console.log("IsWordPreviouslyUsed wordGiven = " + wordGiven)
+	console.log("IsWordPreviouslyUsed length =" + localStorage.WinningWordsList.length)
+	for (i = 0; i < localStorage.WinningWordsList.length; i++) {
+		console.log("loop start")
+		if(WinningWordsList[i] == wordGiven)
+		{
+			console.log("WAS IsWordPreviouslyUsed")
+			return true
+		}
+		console.log("loop end")
+	}
+	console.log("was NOT IsWordPreviouslyUsed")
+	return false
 }
 
 function WordEntered(WordGiven)
 {
-  var TotalValue = 0
-WordGiven = WordGiven.toUpperCase();
-  document.getElementById("WordLength").innerHTML = "Word length: " + WordGiven.length;
-  var i;
-  for (i = 0; i < WordGiven.length; i++) 
-  {
-    CurrentValue = CalculateLetterValue(WordGiven.charAt(i))
-    console.log("Letter:" + WordGiven.charAt(i) +" worth:" + CurrentValue)
-    TotalValue = TotalValue + CurrentValue
-    console.log(" TotalValue:" + TotalValue)
-  }
-  CurrentWordValue = TotalValue
-  document.getElementById("WordValue").innerHTML = "Word Value: " + TotalValue;
-CheckIfDidWin(TotalValue)
+	var TotalValue = 0
+	WordGiven = WordGiven.toUpperCase();
+	document.getElementById("WordLength").innerHTML = "Word length: " + WordGiven.length;
+	var i;
+	for (i = 0; i < WordGiven.length; i++) 
+	{
+		CurrentValue = CalculateLetterValue(WordGiven.charAt(i))
+		console.log("Letter:" + WordGiven.charAt(i) +" worth:" + CurrentValue)
+		TotalValue = TotalValue + CurrentValue
+		console.log(" TotalValue:" + TotalValue)
+	}
+	CurrentWordValue = TotalValue
+	document.getElementById("WordValue").innerHTML = "Word Value: " + TotalValue;
+	CheckIfDidWin(TotalValue)
 }
 function CheckIfDidWin(ValueGiven)
 {
 
-if(ValueGiven < WinningValue)
-{
-	IsWinning = false
-  if(ValueGiven == (WinningValue-IngValue))
-  {
- 	 document.getElementById("DidWin").innerHTML = "Word value: to low, add 'ing'?";
-  }
-  else if(ValueGiven == WinningValue-S_Value)
-  {
-  	document.getElementById("DidWin").innerHTML = "Word value: to low, add 's'?";
-  }
-  else if(ValueGiven == (WinningValue-(IngValue+S_Value)))
-  {
-  	document.getElementById("DidWin").innerHTML = "Word value: to low, add 'ings'?";
-  }
-  else
-  {
-  	document.getElementById("DidWin").innerHTML = "Word value: to low!";
-  }
-}
-else if(ValueGiven == WinningValue)
-{
-if(document.getElementById("WordEnter").value != PastWinningWord)
-{
-document.getElementById("DidWin").innerHTML = "You win!";
-PlayerWon()
-}
-else
-{
-document.getElementById("DidWin").innerHTML = "You just won with that word, try and be a little bit more creative.!";
+	if(ValueGiven < WinningValue)
+	{
+		IsWinning = false
+		if(ValueGiven == (WinningValue-IngValue))
+		{
+			document.getElementById("DidWin").innerHTML = "Word value: to low, add 'ing'?";
+		}
+		else if(ValueGiven == WinningValue-S_Value)
+		{
+			document.getElementById("DidWin").innerHTML = "Word value: to low, add 's'?";
+		}
+		else if(ValueGiven == (WinningValue-(IngValue+S_Value)))
+		{
+			document.getElementById("DidWin").innerHTML = "Word value: to low, add 'ings'?";
+		}
+		else
+		{
+			document.getElementById("DidWin").innerHTML = "Word value: to low!";
+		}
+	}
+	else if(ValueGiven == WinningValue)
+	{
+		if(IsWordPreviouslyUsed(document.getElementById("WordEnter").value) == false)
+		{
+			document.getElementById("DidWin").innerHTML = "You win!";
+			PlayerWon()
+		}
+		else
+		{
+			document.getElementById("DidWin").innerHTML = "You just won with that word, try and be a little bit more creative.!";
+		}
+	}
+	else if(ValueGiven > WinningValue)
+	{
+		IsWinning = false
+		document.getElementById("DidWin").innerHTML = "Word value: to high!";
+	}
 }
 
-}
-else if(ValueGiven > WinningValue)
-{
-IsWinning = false
-document.getElementById("DidWin").innerHTML = "Word value: to high!";
-}
-}
 </script>
 
 </body>
